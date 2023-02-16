@@ -45,8 +45,7 @@ static void do_notify(void *p, void *u) {
 	if (!c)
 		goto fail;
 
-	curl_mime *mime;
-	mime = curl_mime_init(c);
+	curl_mime *mime = NULL;
 
 	err = "setting CURLOPT_URL";
 	ret = curl_easy_setopt(c, CURLOPT_URL, notify_uri);
@@ -179,10 +178,12 @@ fail:
 	goto cleanup;
 
 cleanup:
-	if (c) {
+	if (c) 
 		curl_easy_cleanup(c);
+		
+	if (mime)
 		curl_mime_free(mime);
-	}
+	
 	curl_slist_free_all(req->headers);
 	g_free(req->name);
 	g_free(req->full_filename_path);
