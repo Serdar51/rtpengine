@@ -2622,7 +2622,7 @@ static int amr_format_cmp(const struct rtp_payload_type *A, const struct rtp_pay
 static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 	if (dec->codec_options.amr.cmr_interval <= 0)
 		return;
-
+	ilog(LOG_WARNING, "[CMRTEST] AMR bitrate tracker worked! CMR Interval : %d ", dec->codec_options.amr.cmr_interval);
 	if (dec->u.avc.u.amr.tracker_end.tv_sec
 			&& timeval_cmp(&dec->u.avc.u.amr.tracker_end, &rtpe_now) >= 0) {
 		// analyse the data we gathered
@@ -2630,8 +2630,10 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 		int lowest_used = -1;
 		for (int i = 0; i < AMR_FT_TYPES; i++) {
 			unsigned int br = dec->codec_options.amr.bitrates[i];
-			if (!br)
+			if (!br) {
+				ilog(LOG_WARNING, "[CMRTEST] Current FT Type : %u ", dec->codec_options.amr.bitrates[i]);
 				break; // end of list
+			}
 
 			// ignore restricted modes
 			if (dec->format_options.amr.mode_set) {
@@ -2653,7 +2655,7 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 
 		if (lowest_used != -1 && next_highest != -1) {
 			// we can request a switch up
-			ilog(LOG_DEBUG, "Sending %s CMR to request upping bitrate to %u",
+			ilog(LOG_WARNING, "[CMRTEST] Sending %s CMR to request upping bitrate to %u",
 					dec->def->rtpname, dec->codec_options.amr.bitrates[next_highest]);
 			decoder_event(dec, CE_AMR_SEND_CMR, GINT_TO_POINTER(next_highest));
 		}
@@ -2674,6 +2676,8 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 	const char *err = NULL;
 	AUTO_CLEANUP(GQueue toc, g_queue_clear) = G_QUEUE_INIT;
+
+	ilog(LOG_WARNING, "[CMRTEST] AMR Decoder Input worked --- AMR Codec Options:\n  Mode Change Interval: %d, CMR Interval: %d, ", dec->codec_options.amr.mode_change_interval, dec->codec_options.amr.cmr_interval);
 
 	if (!data || !data->s)
 		goto err;
