@@ -2697,8 +2697,8 @@ static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 	if (bitstr_shift_ret(&d, 4, &cmr))
 		goto err;
 
-	ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][2] AMR Decoder Input worked --- Err : %s, CMR int %u ", err, cmr_int);
 	unsigned int cmr_int = cmr_chr[0] >> 4;
+	ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][2] AMR Decoder Input worked --- Err : %s, CMR int %u ", err, cmr_int);
 	if (cmr_int != 15) {
 		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][3][1] --- Last CMR Tv Sec : %ld, Rtp Now Tv Sec : %ld", dec->u.avc.u.amr.last_cmr.tv_sec, rtpe_now.tv_sec);
 		decoder_event(dec, CE_AMR_CMR_RECV, GUINT_TO_POINTER(cmr_int));
