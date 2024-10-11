@@ -2631,10 +2631,14 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 		int lowest_used = -1;
 		for (int i = 0; i < AMR_FT_TYPES; i++) {
 			unsigned int br = dec->codec_options.amr.bitrates[i];
-			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3][1] AMR bitrate tracker worked! Current FT : %u, i : %d ", dec->codec_options.amr.bitrates[i], i);
+			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3][1] AMR bitrate tracker worked! Current FT(BR) : %u, i : %d", dec->codec_options.amr.bitrates[i], i);
 			if (!br) {
 				break; // end of list
 			}
+
+			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3][2] AMR Format Options: interleaving=%d, mode_set=0x%x, mode_change_period=%d, octet_aligned=%u, crc=%u, robust_sorting=%u, mode_change_neighbor=%u\n", 
+				dec->format_options.amr.interleaving, dec->format_options.amr.mode_set, dec->format_options.amr.mode_change_period, dec->format_options.amr.octet_aligned,
+				dec->format_options.amr.crc, dec->format_options.amr.robust_sorting, dec->format_options.amr.mode_change_neighbor);
 
 			// ignore restricted modes
 			if (dec->format_options.amr.mode_set) {
