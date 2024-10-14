@@ -719,6 +719,7 @@ codec_def_t *codec_find_by_av(enum AVCodecID id) {
 
 
 static const char *avc_decoder_init(decoder_t *dec, const str *extra_opts) {
+	ilog(LOG_WARNING, "[SERDAR][avc_decoder_init][1] --- avc_decoder_init worked! ");
 	const AVCodec *codec = dec->def->decoder;
 	if (!codec)
 		return "codec not supported";
@@ -892,6 +893,7 @@ gboolean decoder_has_dtx(decoder_t *dec) {
 
 
 static void avc_decoder_close(decoder_t *dec) {
+	ilog(LOG_WARNING, "[SERDAR][avc_decoder_close][1] --- avc_decoder_close worked! ");
 #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(56, 1, 0)
 	avcodec_free_context(&dec->u.avc.avcctx);
 #else
@@ -1138,6 +1140,7 @@ static void avlog_ilog(void *ptr, int loglevel, const char *fmt, va_list ap) {
 
 
 static void avc_def_init(struct codec_def_s *def) {
+	ilog(LOG_WARNING, "[SERDAR][avc_decoder_init][1] --- avc_def_init worked!");
 	// look up AVCodec structs
 	if (def->avcodec_name_enc)
 		def->encoder = avcodec_find_encoder_by_name(def->avcodec_name_enc);
@@ -1449,6 +1452,7 @@ encoder_t *encoder_new(void) {
 }
 
 static const char *avc_encoder_init(encoder_t *enc, const str *extra_opts) {
+	ilog(LOG_WARNING, "[SERDAR][avc_encoder_init][1] --- avc_encoder_init worked! ");
 	enc->u.avc.codec = enc->def->encoder;
 	if (!enc->u.avc.codec)
 		return "output codec not found";
@@ -1586,6 +1590,7 @@ err:
 }
 
 static void avc_encoder_close(encoder_t *enc) {
+	ilog(LOG_WARNING, "[SERDAR][avc_encoder_close][1] --- avc_encoder_close worked! ");
 	if (enc->u.avc.avcctx) {
 		avcodec_close(enc->u.avc.avcctx);
 		avcodec_free_context(&enc->u.avc.avcctx);
@@ -1614,6 +1619,7 @@ void encoder_free(encoder_t *enc) {
 }
 
 static int avc_encoder_input(encoder_t *enc, AVFrame **frame) {
+	ilog(LOG_WARNING, "[SERDAR][avc_encoder_input][1] --- avc_encoder_input worked! ");
 	int keep_going = 0;
 	int got_packet = 0;
 	int av_ret = 0;
@@ -2672,6 +2678,7 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 	dec->u.avc.u.amr.bitrate_tracker[ft]++;
 }
 static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
+	ilog(LOG_WARNING, "[SERDAR][amr_decoder_input][1] --- amr_decoder_input worked! ");
 	const char *err = NULL;
 	AUTO_CLEANUP(GQueue toc, g_queue_clear) = G_QUEUE_INIT;
 
@@ -2909,6 +2916,7 @@ static void amr_encoder_mode_change(encoder_t *enc) {
 		enc->u.avc.u.amr.cmr_in_ts = enc->callback.amr.cmr_in_ts;
 }
 static void amr_encoder_got_packet(encoder_t *enc) {
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_got_packet][1] --- amr_encoder_got_packet worked! ");
 	amr_encoder_mode_change(enc);
 	enc->u.avc.u.amr.pkt_seq++;
 }
