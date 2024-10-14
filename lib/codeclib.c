@@ -2895,7 +2895,7 @@ static void amr_encoder_mode_change(encoder_t *enc) {
 		int cmr_diff = (req_br > cur_br) ? -1 : 1;
 		int neigh_br = req_br;
 		int cmr_br = req_br;
-		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][1][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][1][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		while (1) {
 			// step up or down towards the current bitrate
 			cmr += cmr_diff;
@@ -2912,10 +2912,10 @@ static void amr_encoder_mode_change(encoder_t *enc) {
 			}
 			// valid bitrate - continue stepping
 			neigh_br = cmr_br;
-			ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][X][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+			ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][X][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		}
 		// did we finish stepping or is there more to go?
-		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][2][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][2][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		if (neigh_br != req_br)
 			cmr_done = 0;
 		req_br = neigh_br; // set to this
