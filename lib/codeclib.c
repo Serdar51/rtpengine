@@ -2620,25 +2620,18 @@ static int amr_format_cmp(const struct rtp_payload_type *A, const struct rtp_pay
 }
 
 static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
-	ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][1] AMR bitrate tracker worked! worked --- FT : %u ", ft);
 	if (dec->codec_options.amr.cmr_interval <= 0)
 		return;
-	ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][2][1] AMR bitrate tracker worked! CMR Interval : %d ", dec->codec_options.amr.cmr_interval);
-	if (dec->u.avc.u.amr.tracker_end.tv_sec && timeval_cmp(&dec->u.avc.u.amr.tracker_end, &rtpe_now) >= 0) {
-		ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3] AMR bitrate tracker worked! CMR Interval : %d ", dec->codec_options.amr.cmr_interval);
+
+	if (dec->u.avc.u.amr.tracker_end.tv_sec
+			&& timeval_cmp(&dec->u.avc.u.amr.tracker_end, &rtpe_now) >= 0) {
 		// analyse the data we gathered
 		int next_highest = -1;
 		int lowest_used = -1;
 		for (int i = 0; i < AMR_FT_TYPES; i++) {
 			unsigned int br = dec->codec_options.amr.bitrates[i];
-			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3][1] AMR bitrate tracker worked! Current FT(BR) : %u, i : %d", dec->codec_options.amr.bitrates[i], i);
-			if (!br) {
+			if (!br)
 				break; // end of list
-			}
-
-			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][3][2] AMR Format Options: interleaving=%d, mode_set=0x%x, mode_change_period=%d, octet_aligned=%u, crc=%u, robust_sorting=%u, mode_change_neighbor=%u\n", 
-				dec->format_options.amr.interleaving, dec->format_options.amr.mode_set, dec->format_options.amr.mode_change_period, dec->format_options.amr.octet_aligned,
-				dec->format_options.amr.crc, dec->format_options.amr.robust_sorting, dec->format_options.amr.mode_change_neighbor);
 
 			// ignore restricted modes
 			if (dec->format_options.amr.mode_set) {
@@ -2658,19 +2651,16 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 			lowest_used = i;
 		}
 
-		ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][4] AMR bitrate tracker worked! Lowest Used : %d, Next Highest : %d ", lowest_used, next_highest);
-
 		if (lowest_used != -1 && next_highest != -1) {
 			// we can request a switch up
-			ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][5] Sending %s CMR to request upping bitrate to %u", dec->def->rtpname, dec->codec_options.amr.bitrates[next_highest]);
+			ilog(LOG_DEBUG, "Sending %s CMR to request upping bitrate to %u",
+					dec->def->rtpname, dec->codec_options.amr.bitrates[next_highest]);
 			decoder_event(dec, CE_AMR_SEND_CMR, GINT_TO_POINTER(next_highest));
 		}
 
 		// and reset tracker
 		ZERO(dec->u.avc.u.amr.tracker_end);
 	}
-
-	ilog(LOG_WARNING, "[CMRTEST][amr_bitrate_tracker][2][2] AMR bitrate tracker worked! Tracker End Tv Sec : %ld", dec->u.avc.u.amr.tracker_end.tv_sec);
 
 	if (!dec->u.avc.u.amr.tracker_end.tv_sec) {
 		// init
@@ -2684,8 +2674,6 @@ static void amr_bitrate_tracker(decoder_t *dec, unsigned int ft) {
 static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 	const char *err = NULL;
 	AUTO_CLEANUP(GQueue toc, g_queue_clear) = G_QUEUE_INIT;
-
-	ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][1] AMR Decoder Input worked --- AMR Codec Options: Mode Change Interval: %d, CMR Interval: %d, ", dec->codec_options.amr.mode_change_interval, dec->codec_options.amr.cmr_interval);
 
 	if (!data || !data->s)
 		goto err;
@@ -2702,13 +2690,11 @@ static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 		goto err;
 
 	unsigned int cmr_int = cmr_chr[0] >> 4;
-	ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][2] AMR Decoder Input worked --- Err : %s, CMR int %u ", err, cmr_int);
 	if (cmr_int != 15) {
-		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][3][1] --- Last CMR Tv Sec : %ld, Rtp Now Tv Sec : %ld", dec->u.avc.u.amr.last_cmr.tv_sec, rtpe_now.tv_sec);
 		decoder_event(dec, CE_AMR_CMR_RECV, GUINT_TO_POINTER(cmr_int));
 		dec->u.avc.u.amr.last_cmr = rtpe_now;
-	} else if (dec->codec_options.amr.mode_change_interval) {
-		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][3][2] --- Last CMR Tv Sec : %ld, Rtp Now Tv Sec : %ld", dec->u.avc.u.amr.last_cmr.tv_sec, rtpe_now.tv_sec);
+	}
+	else if (dec->codec_options.amr.mode_change_interval) {
 		// no CMR, check if we're due to do our own mode change
 		if (!dec->u.avc.u.amr.last_cmr.tv_sec) // start tracking now
 			dec->u.avc.u.amr.last_cmr = rtpe_now;
@@ -2721,7 +2707,6 @@ static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 	}
 
 	if (dec->format_options.amr.octet_aligned) {
-		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][4] --- Octet Aligned enabled ");
 		if (bitstr_shift(&d, 4))
 			goto err;
 
@@ -2774,7 +2759,6 @@ static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 	}
 
 	if (dec->format_options.amr.crc) {
-		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][5] --- Crc enabled ");
 		// CRCs is one byte per frame
 		err = "missing CRC entry";
 		if (bitstr_shift(&d, num_crcs * 8))
@@ -2825,8 +2809,6 @@ static int amr_decoder_input(decoder_t *dec, const str *data, GQueue *out) {
 			if (avc_decoder_input(dec, &frame, out))
 				goto err;
 		}
-
-		ilog(LOG_WARNING, "[CMRTEST][amr_decoder_input][4] --- Octet Aligned enabled ");
 
 		amr_bitrate_tracker(dec, ft);
 	}
