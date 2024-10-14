@@ -2864,30 +2864,30 @@ static unsigned int amr_encoder_find_next_mode(encoder_t *enc) {
 	return next_mode;
 }
 static void amr_encoder_mode_change(encoder_t *enc) {
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][1][%d][%llu] --- amr_encoder_mode_change worked!", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][1][%u][%llu] --- amr_encoder_mode_change worked!", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
 	if (!memcmp(&enc->callback.amr.cmr_in_ts,
 				&enc->u.avc.u.amr.cmr_in_ts, sizeof(struct timeval)))
 		return;
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][2][%d][%llu] --- interleaving: %d, mode_set: %u, mode_change_period: %d, octet_aligned: %u, crc: %u, robust_sorting: %u, mode_change_neighbor: %u ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, enc->format_options.amr.interleaving, enc->format_options.amr.mode_set, enc->format_options.amr.mode_change_period, enc->format_options.amr.octet_aligned, enc->format_options.amr.crc, enc->format_options.amr.robust_sorting, enc->format_options.amr.mode_change_neighbor);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][2][%u][%llu] --- interleaving: %d, mode_set: %u, mode_change_period: %d, octet_aligned: %u, crc: %u, robust_sorting: %u, mode_change_neighbor: %u ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, enc->format_options.amr.interleaving, enc->format_options.amr.mode_set, enc->format_options.amr.mode_change_period, enc->format_options.amr.octet_aligned, enc->format_options.amr.crc, enc->format_options.amr.robust_sorting, enc->format_options.amr.mode_change_neighbor);
 	// mode change requested: check if this is allowed right now
 	if (enc->format_options.amr.mode_change_period == 2 && (enc->u.avc.u.amr.pkt_seq & 1) != 0)
 		return;
 	unsigned int cmr = enc->callback.amr.cmr_in;
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][3][%d][%llu] --- CMR : %u", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, cmr);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][3][%u][%llu] --- CMR : %u", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, cmr);
 	if (cmr == 0xffff)
 		cmr = amr_encoder_find_next_mode(enc);
 	if (cmr >= AMR_FT_TYPES)
 		return;
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][4][%d][%llu] --- CMR Next : %u", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, cmr);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][4][%u][%llu] --- CMR Next : %u", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, cmr);
 	// ignore CMR for invalid modes
 	if (enc->format_options.amr.mode_set && !(enc->format_options.amr.mode_set & (1 << cmr)))
 		return;
 	int req_br = enc->codec_options.amr.bitrates[cmr];
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][5][%d][%llu] --- Req Bitrate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][5][%u][%llu] --- Req Bitrate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br);
 	if (!req_br)
 		return;
 	int cmr_done = 1;
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][%d][%llu]", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][%u][%llu]", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
 	if (enc->format_options.amr.mode_change_neighbor) {
 		// handle non-neighbour mode changes
 		int cur_br = enc->u.avc.avcctx->bit_rate;
@@ -2895,7 +2895,7 @@ static void amr_encoder_mode_change(encoder_t *enc) {
 		int cmr_diff = (req_br > cur_br) ? -1 : 1;
 		int neigh_br = req_br;
 		int cmr_br = req_br;
-		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][1][%d][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][1][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		while (1) {
 			// step up or down towards the current bitrate
 			cmr += cmr_diff;
@@ -2912,27 +2912,27 @@ static void amr_encoder_mode_change(encoder_t *enc) {
 			}
 			// valid bitrate - continue stepping
 			neigh_br = cmr_br;
-			ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][X][%d][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+			ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][X][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		}
 		// did we finish stepping or is there more to go?
-		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][2][%d][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
+		ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][6][2][%u][%llu] --- Request Bit Rate : %d, Current Bit Rate : %d, Neigbour Bit Rate : %d, Neighbour Bit Rate : %d, Cmr Bit Rate : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cur_br, neigh_br, cmr_br);
 		if (neigh_br != req_br)
 			cmr_done = 0;
 		req_br = neigh_br; // set to this
 	}
 	
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][7][%d][%llu] --- Request Bit Rate : %d, Cmr Done : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cmr_done);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_mode_change][7][%u][%llu] --- Request Bit Rate : %d, Cmr Done : %d", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq, req_br, cmr_done);
 	enc->u.avc.avcctx->bit_rate = req_br;
 	if (cmr_done)
 		enc->u.avc.u.amr.cmr_in_ts = enc->callback.amr.cmr_in_ts;
 }
 static void amr_encoder_got_packet(encoder_t *enc) {
-	ilog(LOG_WARNING, "[SERDAR][amr_encoder_got_packet][1][%d][%llu] --- amr_encoder_got_packet worked! ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
+	ilog(LOG_WARNING, "[SERDAR][amr_encoder_got_packet][1][%u][%llu] --- amr_encoder_got_packet worked! ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
 	amr_encoder_mode_change(enc);
 	enc->u.avc.u.amr.pkt_seq++;
 }
 static int packetizer_amr(AVPacket *pkt, GString *buf, str *output, encoder_t *enc) {
-	ilog(LOG_WARNING, "[SERDAR][packetizer_amr][1][%d][%llu] --- packetizer_amr worked! ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
+	ilog(LOG_WARNING, "[SERDAR][packetizer_amr][1][%u][%llu] --- packetizer_amr worked! ", enc->u.avc.u.amr.cmr_out_seq, (unsigned long long)enc->u.avc.u.amr.pkt_seq);
 	assert(pkt->size >= 1);
 
 	// CMR + TOC byte (already included) + optional ILL/ILP + optional CRC + payload
